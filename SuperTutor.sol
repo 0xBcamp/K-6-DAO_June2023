@@ -1,27 +1,66 @@
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract Tutor {
-    address public tutorAddress; // Address of the tutor
-    bool public isRegistered; // Flag indicating if the tutor is registered
-    address public selectedSubject; // Address of the selected subject (student)
-
-    event TutorRegistered(address tutorAddress); // Event emitted when a tutor is registered
-    event SubjectSelected(address tutorAddress, address studentAddress); // Event emitted when a subject is selected
-
-    constructor() {
-        tutorAddress = msg.sender; // Set the tutor's address as the contract deployer's address
+contract SuperTutor {
+    struct Tutor {
+        bool isRegistered;
+        bool hasSelectedSubject;
+        mapping(address => bool) selectedSubjects;
     }
 
+    mapping(address => Tutor) public tutors;
+
+    event TutorRegistered(address tutorAddress);
+    event SubjectSelected(address tutorAddress, address studentAddress);
+
     function register() external {
-        require(!isRegistered, "Tutor is already registered."); // Check if the tutor is not already registered
-        isRegistered = true; // Mark the tutor as registered
-        emit TutorRegistered(tutorAddress); // Emit the TutorRegistered event
+        require(
+            !tutors[msg.sender].isRegistered,
+            "Tutor is already registered."
+        );
+
+        // Perform additional registration checks if needed
+
+        tutors[msg.sender].isRegistered = true;
+
+        // Optionally, store additional details about the tutor securely
+
+        emit TutorRegistered(msg.sender);
     }
 
     function selectSubject(address _studentAddress) external {
-        require(isRegistered, "Tutor is not registered."); // Check if the tutor is registered
-        require(selectedSubject == address(0), "Tutor has already selected a subject."); // Check if the tutor has not already selected a subject
-        selectedSubject = _studentAddress; // Set the selected subject (student)
-        emit SubjectSelected(tutorAddress, _studentAddress); // Emit the SubjectSelected event
+        require(tutors[msg.sender].isRegistered, "Tutor is not registered.");
+        require(
+            !tutors[msg.sender].hasSelectedSubject,
+            "Tutor has already selected a subject."
+        );
+        require(
+            tutors[_studentAddress].isRegistered,
+            "Student is not registered."
+        );
+
+        tutors[msg.sender].selectedSubjects[_studentAddress] = true;
+        tutors[msg.sender].hasSelectedSubject = true;
+
+        emit SubjectSelected(msg.sender, _studentAddress);
+    }
+
+    function isTutorRegistered(
+        address _tutorAddress
+    ) external view returns (bool) {
+        return tutors[_tutorAddress].isRegistered;
+    }
+
+    function hasTutorSelectedSubject(
+        address _tutorAddress
+    ) external view returns (bool) {
+        return tutors[_tutorAddress].hasSelectedSubject;
+    }
+
+    function isSubjectSelectedByTutor(
+        address _tutorAddress,
+        address _studentAddress
+    ) external view returns (bool) {
+        return tutors[_tutorAddress].selectedSubjects[_studentAddress];
     }
 }

@@ -1,8 +1,10 @@
 pragma solidity ^0.8.0;
 
-contract Administrator {
+import "./MainContract.sol";
+
+contract Administration {
     address public mainContract; // Address of the main contract
-    
+
     event MainContractSet(address mainContractAddress); // Event emitted when the main contract is set
 
     function setMainContract(address _mainContract) external {
@@ -11,12 +13,16 @@ contract Administrator {
         emit MainContractSet(mainContract); // Emit the MainContractSet event
     }
 
-    function accessStudentProfile(address _studentAddress) external view returns (string memory) {
+    function accessStudentProfile(
+        address _studentAddress
+    ) external view returns (string memory) {
         require(mainContract != address(0), "Main contract is not set."); // Check if the main contract is set
         return MainContract(mainContract).getStudentProfile(_studentAddress); // Call the getStudentProfile function of the main contract
     }
 
-    function accessTutorProfile(address _tutorAddress) external view returns (string memory) {
+    function accessTutorProfile(
+        address _tutorAddress
+    ) external view returns (string memory) {
         require(mainContract != address(0), "Main contract is not set."); // Check if the main contract is set
         return MainContract(mainContract).getTutorProfile(_tutorAddress); // Call the getTutorProfile function of the main contract
     }
@@ -24,5 +30,12 @@ contract Administrator {
     function editDAOCode(uint256 _parameters) external {
         require(mainContract != address(0), "Main contract is not set."); // Check if the main contract is set
         MainContract(mainContract).editDAOCode(_parameters); // Call the editDAOCode function of the main contract
+    }
+
+    function getProfile(
+        address _userAddress
+    ) external view returns (string memory) {
+        require(mainContract != address(0), "Main contract is not set."); // Check if the main contract is set
+        return MainContract(mainContract).getProfile(_userAddress); // Call the getProfile function of the main contract
     }
 }
