@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "./Administration.sol";
@@ -50,7 +50,9 @@ contract MainContract {
             "Administration contract is not set."
         ); // Check if the administration contract is set
         return
-            Administration(administrationContract).getProfile(_studentAddress); // Call the getStudentProfile function of the administration contract
+            Administration(administrationContract).accessStudentProfile(
+                _studentAddress
+            ); // Call the accessStudentProfile function of the administration contract
     }
 
     function accessTutorProfile(
@@ -60,6 +62,27 @@ contract MainContract {
             administrationContract != address(0),
             "Administration contract is not set."
         ); // Check if the administration contract is set
-        return Administration(administrationContract).getProfile(_tutorAddress); // Call the getTutorProfile function of the administration contract
+        return
+            Administration(administrationContract).accessTutorProfile(
+                _tutorAddress
+            ); // Call the accessTutorProfile function of the administration contract
+    }
+
+    function getStudentProfile(
+        //retrieve student profile
+        address _studentAddress
+    ) external pure returns (string memory) {
+        // Implement the logic to retrieve the student profile
+        // You can return a hardcoded value for now or fetch the data from storage
+        return "Student Profile";
+    }
+
+    function getTutorProfile(
+        //retrieve tutor profile
+        address _tutorAddress
+    ) external view returns (string memory) {
+        // Implement the logic to retrieve the tutor profile
+        // You can return a hardcoded value for now or fetch the data from storage
+        return "Tutor Profile";
     }
 }
