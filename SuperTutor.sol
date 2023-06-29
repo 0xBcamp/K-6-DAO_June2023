@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract SuperTutor {
@@ -14,10 +14,7 @@ contract SuperTutor {
     event SubjectSelected(address tutorAddress, address studentAddress);
 
     function register() external {
-        require(
-            !tutors[msg.sender].isRegistered,
-            "Tutor is already registered."
-        );
+        require(!tutors[msg.sender].isRegistered, "Tutor is already registered.");
 
         // Perform additional registration checks if needed
 
@@ -30,14 +27,8 @@ contract SuperTutor {
 
     function selectSubject(address _studentAddress) external {
         require(tutors[msg.sender].isRegistered, "Tutor is not registered.");
-        require(
-            !tutors[msg.sender].hasSelectedSubject,
-            "Tutor has already selected a subject."
-        );
-        require(
-            tutors[_studentAddress].isRegistered,
-            "Student is not registered."
-        );
+        require(!tutors[msg.sender].hasSelectedSubject, "Tutor has already selected a subject.");
+        require(tutors[_studentAddress].isRegistered, "Student is not registered.");
 
         tutors[msg.sender].selectedSubjects[_studentAddress] = true;
         tutors[msg.sender].hasSelectedSubject = true;
@@ -45,22 +36,15 @@ contract SuperTutor {
         emit SubjectSelected(msg.sender, _studentAddress);
     }
 
-    function isTutorRegistered(
-        address _tutorAddress
-    ) external view returns (bool) {
+    function isTutorRegistered(address _tutorAddress) external view returns (bool) {
         return tutors[_tutorAddress].isRegistered;
     }
 
-    function hasTutorSelectedSubject(
-        address _tutorAddress
-    ) external view returns (bool) {
+    function hasTutorSelectedSubject(address _tutorAddress) external view returns (bool) {
         return tutors[_tutorAddress].hasSelectedSubject;
     }
 
-    function isSubjectSelectedByTutor(
-        address _tutorAddress,
-        address _studentAddress
-    ) external view returns (bool) {
+    function isSubjectSelectedByTutor(address _tutorAddress, address _studentAddress) external view returns (bool) {
         return tutors[_tutorAddress].selectedSubjects[_studentAddress];
     }
 }
