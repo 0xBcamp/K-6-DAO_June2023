@@ -29,22 +29,23 @@ contract Administration {
 
     function editDAOCode(uint256 _parameters) external {
         require(mainContract != address(0), "Main contract is not set."); // Check if the main contract is set
-        // MainContract(mainContract).editDAOCode(_parameters); // Call the editDAOCode function of the main contract
+         MainContract(mainContract).editDAOCode(_parameters); // Call the editDAOCode function of the main contract
     }
 
-    function getProfile(
-        //Previous function was not getting any profile so optimize the function to return both
-        //Student and Tutor profile
-        address _userAddress
-    ) external view returns (string memory) {
-        require(mainContract != address(0), "Main contract is not set."); // Check if the main contract is set
+function getProfile(address _userAddress) external view returns (string[] memory) {
+    require(mainContract != address(0), "Main contract is not set."); // Check if the main contract is set
 
-        string memory studentProfile = MainContract(mainContract)
-            .getStudentProfile(_userAddress);
-        if (bytes(studentProfile).length == 0) {
-            return MainContract(mainContract).getTutorProfile(_userAddress); // Call the getTutorProfile function if getStudentProfile returns an empty string
-        }
-
-        return studentProfile;
+    string memory studentProfile = MainContract(mainContract).getStudentProfile(_userAddress);
+    if (bytes(studentProfile).length == 0) {
+        string memory tutorProfile = MainContract(mainContract).getTutorProfile(_userAddress);
+        string[] memory profiles = new string[](1);
+        profiles[0] = tutorProfile;
+        return profiles; // Return an array containing the tutor profile
     }
+
+    string[] memory profiles = new string[](1);
+    profiles[0] = studentProfile;
+    return profiles; // Return an array containing the student profile
+}
+
 }
