@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract StudentContract {
@@ -14,10 +14,7 @@ contract StudentContract {
     event SubjectSelected(address studentAddress, address tutorAddress);
 
     function register(string memory _email, string memory _password) external {
-        require(
-            !students[msg.sender].isRegistered,
-            "Student is already registered."
-        );
+        require(!students[msg.sender].isRegistered, "Student is already registered.");
 
         // Perform additional registration checks if needed
 
@@ -29,18 +26,9 @@ contract StudentContract {
     }
 
     function selectSubject(address _tutorAddress) external {
-        require(
-            students[msg.sender].isRegistered,
-            "Student is not registered."
-        );
-        require(
-            !students[msg.sender].hasSelectedSubject,
-            "Student has already selected a subject."
-        );
-        require(
-            students[_tutorAddress].isRegistered,
-            "Tutor is not registered."
-        );
+        require(students[msg.sender].isRegistered, "Student is not registered.");
+        require(!students[msg.sender].hasSelectedSubject, "Student has already selected a subject.");
+        require(students[_tutorAddress].isRegistered, "Tutor is not registered.");
 
         students[msg.sender].selectedSubjects[_tutorAddress] = true;
         students[msg.sender].hasSelectedSubject = true;
