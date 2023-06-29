@@ -20,10 +20,7 @@ contract MainContract {
         administrationContract = _administrationContract; // Set the address of the administration contract
     }
 
-    function registerStudent(
-        string memory _email,
-        string memory _password
-    ) external {
+    function registerStudent(string memory _email, string memory _password) external {
         StudentContract(studentContract).register(_email, _password); // Call the register function of the student contract
     }
 
@@ -36,53 +33,37 @@ contract MainContract {
         SuperTutor(tutorContract).selectSubject(msg.sender); // Call the selectSubject function of the tutor contract
     }
 
-    function setAdministrationContract(
-        address _administrationContract
-    ) external {
+    function setAdministrationContract(address _administrationContract) external {
         administrationContract = _administrationContract; // Set the address of the administration contract
     }
 
-    function accessStudentProfile(
-        address _studentAddress
-    ) external view returns (string memory) {
-        require(
-            administrationContract != address(0),
-            "Administration contract is not set."
-        ); // Check if the administration contract is set
-        return
-            Administration(administrationContract).accessStudentProfile(
-                _studentAddress
-            ); // Call the accessStudentProfile function of the administration contract
+    function accessStudentProfile(address _studentAddress) external view returns (string memory) {
+        require(administrationContract != address(0), "Administration contract is not set."); // Check if the administration contract is set
+        return Administration(administrationContract).accessStudentProfile(_studentAddress); // Call the accessStudentProfile function of the administration contract
     }
 
-    function accessTutorProfile(
-        address _tutorAddress
-    ) external view returns (string memory) {
-        require(
-            administrationContract != address(0),
-            "Administration contract is not set."
-        ); // Check if the administration contract is set
-        return
-            Administration(administrationContract).accessTutorProfile(
-                _tutorAddress
-            ); // Call the accessTutorProfile function of the administration contract
+    function accessTutorProfile(address _tutorAddress) external view returns (string memory) {
+        require(administrationContract != address(0), "Administration contract is not set."); // Check if the administration contract is set
+        return Administration(administrationContract).accessTutorProfile(_tutorAddress); // Call the accessTutorProfile function of the administration contract
     }
 
-    function getStudentProfile(
-        //retrieve student profile
-        address _studentAddress
-    ) external pure returns (string memory) {
-        // Implement the logic to retrieve the student profile
-        // You can return a hardcoded value for now or fetch the data from storage
-        return "Student Profile";
+    function editDAOCode(uint256 _parameters) external {
+        require(administrationContract != address(0), "Administration contract is not set."); // Check if the administration contract is set
+        Administration(administrationContract).editDAOCode(_parameters); // Call the editDAOCode function of the administration contract
     }
 
-    function getTutorProfile(
-        //retrieve tutor profile
-        address _tutorAddress
-    ) external view returns (string memory) {
-        // Implement the logic to retrieve the tutor profile
-        // You can return a hardcoded value for now or fetch the data from storage
-        return "Tutor Profile";
+    function getProfile(address _userAddress) external view returns (string[] memory) {
+        require(administrationContract != address(0), "Administration contract is not set."); // Check if the administration contract is set
+        return Administration(administrationContract).getProfile(_userAddress); // Call the getProfile function of the administration contract
+    }
+
+    function getStudentProfile(address _studentAddress) external view returns (string memory) {
+        require(msg.sender == studentContract, "Caller is not authorized to access student profiles."); // Only the student contract is allowed to access student profiles
+        return StudentContract(studentContract).getStudentProfile(_studentAddress); // Call the getStudentProfile function of the student contract
+    }
+
+    function getTutorProfile(address _tutorAddress) external view returns (string memory) {
+        require(msg.sender == tutorContract, "Caller is not authorized to access tutor profiles."); // Only the tutor contract is allowed to access tutor profiles
+        return SuperTutor(tutorContract).getTutorProfile(_tutorAddress); // Call the getTutorProfile function of the tutor contract
     }
 }
