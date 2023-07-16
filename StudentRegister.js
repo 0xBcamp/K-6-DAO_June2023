@@ -1,6 +1,33 @@
 import React, { useState } from 'react';
 import Web3 from 'web3';
 
+const argon2 = require('argon2');
+
+async function hashPassword(password) {
+    try{
+        const hash = await argon2.hash(password);
+        console.log(hash);
+        return hash;
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+async function verify(password, hashed){
+    try {
+        if (await argon2.verify("<big long hash>", "password")) {
+          // password match
+            return true
+        } else {
+            return false
+          // password did not match
+        }
+      } catch (err) {
+        console.log(err)
+        // internal failure
+      }
+}
+
 const StudentRegister = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -13,9 +40,18 @@ const StudentRegister = () => {
         setAccount(accounts[0])
     }
 
+  
+
+
     // Function to handle form submission
     // Function to handle form submission
     const handleSubmit = async (event) => {
+
+    // Hash the password before sending it
+    const hashedPassword = await argon2.hash(password);
+    
+
+
     event.preventDefault();
     await loadBlockchainData();
 
@@ -140,7 +176,7 @@ const StudentRegister = () => {
 
     // Call the register function of your contract
     // You should handle errors appropriately and provide user feedback
-    await contractInstance.methods.register(email, password).send({ from: account });
+    await contractInstance.methods.register(email, hashedPassword).send({ from: account });
 }
 
 
@@ -152,6 +188,11 @@ const StudentRegister = () => {
                 <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
                 <button type="submit">Register</button>
             </form>
+            <form onSubmit={handleSubmit}>
+
+
+            </form>
+
         </div>
     );
 }
